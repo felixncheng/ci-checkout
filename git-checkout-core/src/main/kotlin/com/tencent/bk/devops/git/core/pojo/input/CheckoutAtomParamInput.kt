@@ -168,5 +168,9 @@ data class CheckoutAtomParamInput(
     /**
      * 启用sparse cone模式
      */
-    val enableSparseCone: Boolean? = null
+    val enableSparseCone: Boolean? = null,
+    /**
+     * github镜像白名单项目(owner/repo),逗号分隔
+     */
+    val githubMirrorWhiteProject: String? = null,
 )

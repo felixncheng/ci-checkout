@@ -18,26 +18,35 @@ object GithubMirrorHelper {
      * 2. 仓库名(owner/repo)在白名单内
      */
     fun shouldMirror(repositoryUrl: String, whiteProject: String?): Boolean {
-        if (whiteProject.isNullOrBlank()) {
+        val whiteProjectList = whiteProject?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }
+        if (whiteProjectList.isNullOrEmpty()) {
             return false
         }
+        val repositoryName = resolveGithubRepositoryName(repositoryUrl)
+        val mirror = repositoryName != null && whiteProjectList.contains(repositoryName)
+        if (mirror) {
+            logger.info("github project [$repositoryName] hit mirror white list")
+        }
+        return mirror
+    }
+
+    /**
+     * 解析github仓库名(owner/repo),非github域名或解析失败返回null
+     */
+    private fun resolveGithubRepositoryName(repositoryUrl: String): String? {
         val serverInfo = try {
             GitUtil.getServerInfo(repositoryUrl)
         } catch (e: ParamInvalidException) {
             logger.debug("fail to parse repo url for github mirror, repositoryUrl[$repositoryUrl]")
-            return false
+            return null
         }
         logger.info("project [${serverInfo.repositoryName}] host name [${serverInfo.hostName}]")
-        // 支持https/ssh
-        if (!serverInfo.hostName.contains(GitConstants.GITHUB_HOST)) {
-            return false
+        // 支持https/ssh,非github域名不镜像
+        return if (serverInfo.hostName.contains(GitConstants.GITHUB_HOST)) {
+            serverInfo.repositoryName
+        } else {
+            null
         }
-        val whiteProjectList = whiteProject.split(",").map { it.trim() }.filter { it.isNotBlank() }
-        val mirror = whiteProjectList.contains(serverInfo.repositoryName)
-        if (mirror) {
-            logger.info("github project [${serverInfo.repositoryName}] hit mirror white list")
-        }
-        return mirror
     }
 
     /**

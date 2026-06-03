@@ -75,7 +75,10 @@ class GitFetchHelper constructor(
         if (preMerge && fetchDepth > 0 && !git.isAtLeastVersion(GitConstants.SUPPORT_SHALLOW_SINCE_GIT_VERSION)) {
             logger.warn("开启preMerge，并且指定depth,git版本需要大于2.18才会生效，否则使用的是全量拉取")
         }
-        if (canShallowSince(baseCommitId)) {
+        // 满足preMerge+浅克隆且存在公共祖先commit且git版本支持时,才按--shallow-since拉取
+        val canShallowSince = preMerge && fetchDepth > 0 && !baseCommitId.isNullOrBlank() &&
+                git.isAtLeastVersion(GitConstants.SUPPORT_SHALLOW_SINCE_GIT_VERSION)
+        if (canShallowSince) {
             git.fetch(
                 refSpec = listOf(baseCommitId),
                 fetchDepth = 1,
@@ -87,10 +90,6 @@ class GitFetchHelper constructor(
         }
         return shallowSince
     }
-
-    private fun GitSourceSettings.canShallowSince(baseCommitId: String?) =
-        preMerge && fetchDepth > 0 && !baseCommitId.isNullOrBlank() &&
-                git.isAtLeastVersion(GitConstants.SUPPORT_SHALLOW_SINCE_GIT_VERSION)
 
     /**
      * 测试是否能够merge成功

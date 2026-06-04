@@ -2,6 +2,7 @@ package com.tencent.bk.devops.git.core.util
 
 import com.tencent.bk.devops.git.core.constant.GitConstants
 import com.tencent.bk.devops.git.core.exception.ParamInvalidException
+import com.tencent.bk.devops.git.core.service.GitCommandManager
 import org.slf4j.LoggerFactory
 
 /**
@@ -63,5 +64,39 @@ object GithubMirrorHelper {
         val mirrorUrl = "https://$mirrorHost/$repositoryName.git"
         logger.info("rewrite github url to mirror url [$mirrorUrl]")
         return mirrorUrl
+    }
+
+    /**
+     * 镜像优先执行,失败回源(github)
+     * 适用于git fetch/git lfs pull等依赖origin地址的操作
+     * 1. 未配置镜像源时,直接执行action
+     * 2. 配置了镜像源时,临时将origin指向镜像源后执行action,执行完成后还原origin
+     * 3. 镜像源执行失败时,还原origin并回源(github)重新执行action
+     */
+    fun runWithMirror(git: GitCommandManager, mirrorFetchUrl: String?, action: () -> Unit) {
+        if (mirrorFetchUrl.isNullOrBlank()) {
+            action()
+            return
+        }
+        val originUrl = git.tryGetFetchUrl()
+        var mirrorSuccess = false
+        try {
+            logger.info("execute from mirror $mirrorFetchUrl")
+            git.remoteSetUrl(remoteName = GitConstants.ORIGIN_REMOTE_NAME, remoteUrl = mirrorFetchUrl)
+            action()
+            mirrorSuccess = true
+        } catch (ignore: Exception) {
+            logger.warn(
+                "failed to execute from mirror, fallback to github directly: " +
+                        SensitiveLineParser.onParseLine(ignore.message ?: "")
+            )
+        } finally {
+            // 还原origin为github,保证镜像执行成功后续阶段以及降级均走github
+            git.remoteSetUrl(remoteName = GitConstants.ORIGIN_REMOTE_NAME, remoteUrl = originUrl)
+        }
+        // 镜像执行失败,回源重新执行
+        if (!mirrorSuccess) {
+            action()
+        }
     }
 }

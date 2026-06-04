@@ -5,7 +5,7 @@ import com.tencent.bk.devops.git.core.pojo.GitSourceSettings
 import com.tencent.bk.devops.git.core.service.GitCommandManager
 import com.tencent.bk.devops.git.core.util.DateUtil
 import com.tencent.bk.devops.git.core.util.GitUtil
-import com.tencent.bk.devops.git.core.util.SensitiveLineParser
+import com.tencent.bk.devops.git.core.util.GithubMirrorHelper
 import org.slf4j.LoggerFactory
 
 class GitFetchHelper constructor(
@@ -22,40 +22,15 @@ class GitFetchHelper constructor(
 
     fun doFetch() {
         with(settings) {
-            if (mirrorFetchUrl.isNullOrBlank()) {
-                fetchInternal()
-                return
-            }
-            val originUrl = git.tryGetFetchUrl()
-            var mirrorSuccess = false
-            try {
-                logger.info("fetch from mirror $mirrorFetchUrl")
-                git.remoteSetUrl(remoteName = GitConstants.ORIGIN_REMOTE_NAME, remoteUrl = mirrorFetchUrl)
-                fetchInternal()
-                mirrorSuccess = true
-            } catch (ignore: Exception) {
-                logger.warn(
-                    "failed to fetch from mirror, fallback to github directly: " +
-                            SensitiveLineParser.onParseLine(ignore.message ?: "")
-                )
-            } finally {
-                // 还原origin为github,保证镜像拉取成功后续阶段以及降级拉取均走github
-                git.remoteSetUrl(remoteName = GitConstants.ORIGIN_REMOTE_NAME, remoteUrl = originUrl)
-            }
-            // 镜像拉取失败,回源重新拉取
-            if (!mirrorSuccess) {
-                fetchInternal()
+            GithubMirrorHelper.runWithMirror(git = git, mirrorFetchUrl = mirrorFetchUrl) {
+                val shallowSince = calculateShallowSince()
+                fetchTargetRepository(shallowSince = shallowSince)
+                fetchSourceRepository(shallowSince = shallowSince)
+                fetchPrePushBranch(shallowSince = shallowSince)
+                fetchPreMergeCommit()
+                testMerge()
             }
         }
-    }
-
-    private fun GitSourceSettings.fetchInternal() {
-        val shallowSince = calculateShallowSince()
-        fetchTargetRepository(shallowSince = shallowSince)
-        fetchSourceRepository(shallowSince = shallowSince)
-        fetchPrePushBranch(shallowSince = shallowSince)
-        fetchPreMergeCommit()
-        testMerge()
     }
 
     /**

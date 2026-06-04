@@ -22,7 +22,7 @@ object GithubMirrorHelper {
      * 3. 设置了镜像源
      */
     fun shouldMirror(repositoryUrl: String, whiteProject: String?, githubMirrorHost: String?): Boolean {
-        logger.info(
+        logger.debug(
             "check if should mirror for repositoryUrl[$repositoryUrl], " +
                     "whiteProject[$whiteProject] , githubMirrorHost[$githubMirrorHost]"
         )
@@ -33,7 +33,7 @@ object GithubMirrorHelper {
         val repositoryName = resolveGithubRepositoryName(repositoryUrl)
         val mirror = repositoryName != null && whiteProjectList.contains(repositoryName)
         if (mirror) {
-            logger.info("github project [$repositoryName] hit mirror white list")
+            logger.debug("github project [$repositoryName] hit mirror white list")
         }
         return mirror
     }
@@ -48,7 +48,6 @@ object GithubMirrorHelper {
             logger.debug("fail to parse repo url for github mirror, repositoryUrl[$repositoryUrl]")
             return null
         }
-        logger.info("project [${serverInfo.repositoryName}] host name [${serverInfo.hostName}]")
         // 支持https/ssh,非github域名不镜像
         return if (serverInfo.hostName.contains(GitConstants.GITHUB_HOST)) {
             serverInfo.repositoryName
@@ -64,7 +63,6 @@ object GithubMirrorHelper {
         val serverInfo = GitUtil.getServerInfo(repositoryUrl)
         val repositoryName = serverInfo.repositoryName
         val mirrorUrl = "https://$mirrorHost/$repositoryName.git"
-        logger.info("rewrite github url to mirror url [$mirrorUrl]")
         return mirrorUrl
     }
 
@@ -83,12 +81,13 @@ object GithubMirrorHelper {
         val originUrl = git.tryGetFetchUrl()
         var mirrorSuccess = false
         try {
-            logger.info("execute from mirror $mirrorFetchUrl")
+            EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.BKC_CACHE.name)
             git.remoteSetUrl(remoteName = GitConstants.ORIGIN_REMOTE_NAME, remoteUrl = mirrorFetchUrl)
             action()
             mirrorSuccess = true
-            EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.BKC_CACHE.name)
+            EnvHelper.putContext(ContextConstants.CONTEXT_MIRROR_RESULT, "success")
         } catch (ignore: Exception) {
+            EnvHelper.putContext(ContextConstants.CONTEXT_MIRROR_RESULT, "failure")
             logger.warn(
                 "failed to execute from mirror, fallback to github directly: " +
                         SensitiveLineParser.onParseLine(ignore.message ?: "")

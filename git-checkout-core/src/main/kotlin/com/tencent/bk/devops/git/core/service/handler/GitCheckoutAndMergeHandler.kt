@@ -37,6 +37,7 @@ import com.tencent.bk.devops.git.core.service.helper.GitMergeHelper
 import com.tencent.bk.devops.git.core.service.helper.GitSparseCheckoutHelper
 import com.tencent.bk.devops.git.core.service.helper.RefHelper
 import com.tencent.bk.devops.git.core.util.EnvHelper
+import com.tencent.bk.devops.git.core.util.GithubMirrorHelper
 import org.slf4j.LoggerFactory
 
 class GitCheckoutAndMergeHandler(
@@ -58,7 +59,9 @@ class GitCheckoutAndMergeHandler(
             val checkoutInfo = refHelper.getCheckInfo()
             sparseCheckoutHelper.init(checkoutInfo)
             EnvHelper.putContext(CONTEXT_CHECKOUT_REF, checkoutInfo.ref)
-            git.checkout(checkoutInfo.ref, checkoutInfo.startPoint)
+            GithubMirrorHelper.runWithMirror(git, settings.mirrorFetchUrl) {
+                git.checkout(checkoutInfo.ref, checkoutInfo.startPoint)
+            }
             if (checkoutInfo.upstream.isNotBlank()) {
                 git.branchUpstream(checkoutInfo.upstream)
             }

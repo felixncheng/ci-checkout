@@ -14,5 +14,8 @@ enum class FetchStrategy {
     VM_TGIT_CACHE,
 
     // 制品库缓存
-    BKREPO_CACHE
+    BKREPO_CACHE ,
+
+    // BKC缓存
+    BKC_CACHE
 }

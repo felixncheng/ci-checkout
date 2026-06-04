@@ -1,6 +1,8 @@
 package com.tencent.bk.devops.git.core.util
 
+import com.tencent.bk.devops.git.core.constant.ContextConstants
 import com.tencent.bk.devops.git.core.constant.GitConstants
+import com.tencent.bk.devops.git.core.enums.FetchStrategy
 import com.tencent.bk.devops.git.core.exception.ParamInvalidException
 import com.tencent.bk.devops.git.core.service.GitCommandManager
 import org.slf4j.LoggerFactory
@@ -85,6 +87,7 @@ object GithubMirrorHelper {
             git.remoteSetUrl(remoteName = GitConstants.ORIGIN_REMOTE_NAME, remoteUrl = mirrorFetchUrl)
             action()
             mirrorSuccess = true
+            EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.BKC_CACHE.name)
         } catch (ignore: Exception) {
             logger.warn(
                 "failed to execute from mirror, fallback to github directly: " +

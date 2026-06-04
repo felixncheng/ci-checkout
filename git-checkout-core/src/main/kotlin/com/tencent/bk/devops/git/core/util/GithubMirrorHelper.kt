@@ -23,11 +23,8 @@ object GithubMirrorHelper {
             "check if should mirror for repositoryUrl[$repositoryUrl], " +
                     "whiteProject[$whiteProject] , githubMirrorHost[$githubMirrorHost]"
         )
-        if (githubMirrorHost.isNullOrEmpty()) {
-            return false
-        }
         val whiteProjectList = whiteProject?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }
-        if (whiteProjectList.isNullOrEmpty()) {
+        if (githubMirrorHost.isNullOrEmpty() || whiteProjectList.isNullOrEmpty()) {
             return false
         }
         val repositoryName = resolveGithubRepositoryName(repositoryUrl)

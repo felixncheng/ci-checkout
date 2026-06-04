@@ -67,6 +67,7 @@ import com.tencent.bk.devops.git.core.service.auth.UserTokenGitAuthProvider
 import com.tencent.bk.devops.git.core.service.helper.IInputAdapter
 import com.tencent.bk.devops.git.core.util.EnvHelper
 import com.tencent.bk.devops.git.core.util.GitUtil
+import com.tencent.bk.devops.git.core.util.GithubMirrorHelper
 import com.tencent.bk.devops.git.core.util.RepositoryUtils
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -236,6 +237,12 @@ class GitCodeAtomParamInputAdapter(
                 value = gitCodePaths
             )
 
+            val githubMirrorFetchUrl =
+                if (GithubMirrorHelper.shouldMirror(repository.url, githubMirrorWhiteProject, githubMirrorHost)) {
+                    GithubMirrorHelper.getMirrorUrl(repository.url, githubMirrorHost.orEmpty())
+                } else {
+                    null
+                }
             return GitSourceSettings(
                 bkWorkspace = bkWorkspace,
                 pipelineId = pipelineId,
@@ -296,7 +303,8 @@ class GitCodeAtomParamInputAdapter(
                 tGitCacheGrayWhiteProject = tGitCacheGrayWhiteProject,
                 serverPreMerge = serverPreMerge,
                 serverPreMergeCommit = serverPreMergeCommit,
-                enableSparseCone = enableSparseCone
+                enableSparseCone = enableSparseCone,
+                mirrorFetchUrl = githubMirrorFetchUrl
             )
         }
     }

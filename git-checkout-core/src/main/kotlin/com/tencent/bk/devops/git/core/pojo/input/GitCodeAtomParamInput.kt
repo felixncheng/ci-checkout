@@ -156,6 +156,10 @@ data class GitCodeAtomParamInput(
      * github镜像白名单项目(owner/repo),逗号分隔
      */
     val githubMirrorWhiteProject: String? = null,
+    /**
+     * github镜像host
+     */
+    val githubMirrorHost: String? = null,
 ) {
     /**
      * 是否为post action

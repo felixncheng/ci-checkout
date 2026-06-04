@@ -16,8 +16,16 @@ object GithubMirrorHelper {
      * 是否需要走github镜像
      * 1. 仓库host为github.com
      * 2. 仓库名(owner/repo)在白名单内
+     * 3. 设置了镜像源
      */
-    fun shouldMirror(repositoryUrl: String, whiteProject: String?): Boolean {
+    fun shouldMirror(repositoryUrl: String, whiteProject: String?, githubMirrorHost: String?): Boolean {
+        logger.info(
+            "check if should mirror for repositoryUrl[$repositoryUrl], " +
+                    "whiteProject[$whiteProject] , githubMirrorHost[$githubMirrorHost]"
+        )
+        if (githubMirrorHost.isNullOrEmpty()) {
+            return false
+        }
         val whiteProjectList = whiteProject?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() }
         if (whiteProjectList.isNullOrEmpty()) {
             return false
@@ -52,10 +60,10 @@ object GithubMirrorHelper {
     /**
      * 将github.com仓库地址替换为镜像地址,统一产出https形态
      */
-    fun getMirrorUrl(repositoryUrl: String): String {
+    fun getMirrorUrl(repositoryUrl: String, mirrorHost: String): String {
         val serverInfo = GitUtil.getServerInfo(repositoryUrl)
         val repositoryName = serverInfo.repositoryName
-        val mirrorUrl = "https://${GitConstants.GITHUB_MIRROR_HOST}/$repositoryName.git"
+        val mirrorUrl = "https://$mirrorHost/$repositoryName.git"
         logger.info("rewrite github url to mirror url [$mirrorUrl]")
         return mirrorUrl
     }

@@ -159,11 +159,12 @@ class GitCodeCommandAtomParamInputAdapter(
                 EnvHelper.addEnvVariable("bk_repo_ticket_id_${input.pipelineTaskId}", ticketId ?: "")
             }
 
-            val githubMirrorFetchUrl = if (GithubMirrorHelper.shouldMirror(repositoryUrl, githubMirrorWhiteProject)) {
-                GithubMirrorHelper.getMirrorUrl(repositoryUrl)
-            } else {
-                null
-            }
+            val githubMirrorFetchUrl =
+                if (GithubMirrorHelper.shouldMirror(repositoryUrl, githubMirrorWhiteProject, githubMirrorHost)) {
+                    GithubMirrorHelper.getMirrorUrl(repositoryUrl, githubMirrorHost.orEmpty())
+                } else {
+                    null
+                }
             return GitSourceSettings(
                 bkWorkspace = bkWorkspace,
                 pipelineId = pipelineId,
@@ -225,7 +226,7 @@ class GitCodeCommandAtomParamInputAdapter(
                 serverPreMerge = serverPreMerge,
                 serverPreMergeCommit = serverPreMergeCommit,
                 enableSparseCone = enableSparseCone,
-                githubMirrorFetchUrl = githubMirrorFetchUrl
+                mirrorFetchUrl = githubMirrorFetchUrl
             )
         }
     }

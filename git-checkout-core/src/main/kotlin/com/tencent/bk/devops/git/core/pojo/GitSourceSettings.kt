@@ -255,9 +255,9 @@ data class GitSourceSettings(
      */
     val enableSparseCone: Boolean? = null,
     /**
-     * github镜像拉取地址
+     * 代码库镜像源拉取地址
      */
-    val githubMirrorFetchUrl: String? = null
+    val mirrorFetchUrl: String? = null
 ) {
     val sourceRepoUrlEqualsRepoUrl: Boolean
         get() = GitUtil.isSameRepository(

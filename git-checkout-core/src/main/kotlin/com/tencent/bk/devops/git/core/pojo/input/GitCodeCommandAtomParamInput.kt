@@ -167,6 +167,10 @@ data class GitCodeCommandAtomParamInput(
      * 代码库镜像地址
      */
     val mirrorUrl: String? = null,
+    /**
+     * bkc github灰度白名单项目
+     */
+    val bkcGithubGrayWhiteProject: String? = null,
 ) {
     /**
      * 是否为post action

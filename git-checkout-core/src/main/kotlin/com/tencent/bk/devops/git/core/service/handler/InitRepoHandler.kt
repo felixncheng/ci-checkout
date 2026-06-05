@@ -87,9 +87,10 @@ class InitRepoHandler(
             // 设置安全目录
             setSafeDir()
             git.remoteAdd(ORIGIN_REMOTE_NAME, repositoryUrl)
-            if (!settings.mirrorUrl.isNullOrEmpty()) {
+            val mirrorUrl = settings.mirrorUrl
+            if (!mirrorUrl.isNullOrEmpty()) {
                 // fetch 使用镜像地址,push 保持不变
-                git.remoteSetUrl(ORIGIN_REMOTE_NAME, settings.mirrorUrl)
+                git.remoteSetUrl(ORIGIN_REMOTE_NAME, mirrorUrl)
                 git.remoteSetPushUrl(ORIGIN_REMOTE_NAME, repositoryUrl)
                 EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
             }

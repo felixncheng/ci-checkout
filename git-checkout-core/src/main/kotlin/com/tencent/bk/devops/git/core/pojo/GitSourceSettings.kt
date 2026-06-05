@@ -257,7 +257,7 @@ data class GitSourceSettings(
     /**
      * 代码库镜像源拉取地址
      */
-    val mirrorUrl: String? = null
+    var mirrorUrl: String? = null
 ) {
     val sourceRepoUrlEqualsRepoUrl: Boolean
         get() = GitUtil.isSameRepository(

@@ -153,13 +153,9 @@ data class GitCodeAtomParamInput(
      */
     val enableSparseCone: Boolean? = null,
     /**
-     * github镜像白名单项目(owner/repo),逗号分隔
+     * 代码库镜像地址
      */
-    val githubMirrorWhiteProject: String? = null,
-    /**
-     * github镜像host
-     */
-    val githubMirrorHost: String? = null,
+    val mirrorUrl: String? = null,
 ) {
     /**
      * 是否为post action

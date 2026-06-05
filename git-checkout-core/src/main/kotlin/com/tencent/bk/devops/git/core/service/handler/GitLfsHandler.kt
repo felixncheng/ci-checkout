@@ -5,7 +5,6 @@ import com.tencent.bk.devops.git.core.pojo.GitSourceSettings
 import com.tencent.bk.devops.git.core.service.GitCommandManager
 import com.tencent.bk.devops.git.core.service.helper.GitSparseCheckoutHelper
 import com.tencent.bk.devops.git.core.util.EnvHelper
-import com.tencent.bk.devops.git.core.util.GithubMirrorHelper
 import org.slf4j.LoggerFactory
 
 class GitLfsHandler(
@@ -48,10 +47,10 @@ class GitLfsHandler(
                         includeSubPath to excludeSubPath
                     }
                 }
-                // lfs拉取支持github镜像,镜像优先,失败回源
-                GithubMirrorHelper.runWithMirror(git = git, mirrorFetchUrl = mirrorFetchUrl) {
-                    git.lfsPull(fetchInclude = fetchInclude, fetchExclude = fetchExclude)
-                }
+                git.lfsPull(
+                    fetchInclude = fetchInclude,
+                    fetchExclude = fetchExclude
+                )
                 logger.groupEnd("")
             }
         } finally {

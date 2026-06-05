@@ -87,6 +87,12 @@ class InitRepoHandler(
             // 设置安全目录
             setSafeDir()
             git.remoteAdd(ORIGIN_REMOTE_NAME, repositoryUrl)
+            if (!settings.mirrorUrl.isNullOrEmpty()) {
+                // fetch 使用镜像地址,push 保持不变
+                git.remoteSetUrl(ORIGIN_REMOTE_NAME, settings.mirrorUrl)
+                git.remoteSetPushUrl(ORIGIN_REMOTE_NAME, repositoryUrl)
+                EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
+            }
             // if source repository is fork repo, adding devops-virtual-origin
             if (preMerge && !sourceRepoUrlEqualsRepoUrl
             ) {

@@ -195,13 +195,4 @@ object GitConstants {
     const val TGIT_CACHE_GRAY_PROJECT = "TGIT_CACHE_GRAY_PROJECT"
 
     const val TGIT_CACHE_GRAY_WEIGHT = "TGIT_CACHE_GRAY_WEIGHT"
-
-    // github源域名
-    const val GITHUB_HOST = "github.com"
-
-    // github镜像域名
-    const val GITHUB_MIRROR_HOST = "GITHUB_MIRROR_HOST"
-
-    // github镜像白名单项目(owner/repo),逗号分隔
-    const val GITHUB_MIRROR_WHITE_PROJECT = "GITHUB_MIRROR_WHITE_PROJECT"
 }

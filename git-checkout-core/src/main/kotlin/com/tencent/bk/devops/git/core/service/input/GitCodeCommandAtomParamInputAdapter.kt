@@ -53,7 +53,6 @@ import com.tencent.bk.devops.git.core.service.helper.IInputAdapter
 import com.tencent.bk.devops.git.core.service.repository.GitScmService
 import com.tencent.bk.devops.git.core.util.EnvHelper
 import com.tencent.bk.devops.git.core.util.GitUtil
-import com.tencent.bk.devops.git.core.util.GithubMirrorHelper
 import com.tencent.bk.devops.git.core.util.RegexUtil
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -159,12 +158,6 @@ class GitCodeCommandAtomParamInputAdapter(
                 EnvHelper.addEnvVariable("bk_repo_ticket_id_${input.pipelineTaskId}", ticketId ?: "")
             }
 
-            val githubMirrorFetchUrl =
-                if (GithubMirrorHelper.shouldMirror(repositoryUrl, githubMirrorWhiteProject, githubMirrorHost)) {
-                    GithubMirrorHelper.getMirrorUrl(repositoryUrl, githubMirrorHost.orEmpty())
-                } else {
-                    null
-                }
             return GitSourceSettings(
                 bkWorkspace = bkWorkspace,
                 pipelineId = pipelineId,
@@ -226,7 +219,7 @@ class GitCodeCommandAtomParamInputAdapter(
                 serverPreMerge = serverPreMerge,
                 serverPreMergeCommit = serverPreMergeCommit,
                 enableSparseCone = enableSparseCone,
-                mirrorFetchUrl = githubMirrorFetchUrl
+                mirrorUrl = mirrorUrl
             )
         }
     }

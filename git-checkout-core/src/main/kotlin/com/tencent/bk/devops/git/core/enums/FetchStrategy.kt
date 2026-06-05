@@ -16,6 +16,6 @@ enum class FetchStrategy {
     // 制品库缓存
     BKREPO_CACHE ,
 
-    // BKC缓存
-    BKC_CACHE
+    // 拉取镜像
+    PULL_MIRROR
 }

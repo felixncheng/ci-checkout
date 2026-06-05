@@ -5,7 +5,6 @@ import com.tencent.bk.devops.git.core.pojo.GitSourceSettings
 import com.tencent.bk.devops.git.core.service.GitCommandManager
 import com.tencent.bk.devops.git.core.util.DateUtil
 import com.tencent.bk.devops.git.core.util.GitUtil
-import com.tencent.bk.devops.git.core.util.GithubMirrorHelper
 import org.slf4j.LoggerFactory
 
 class GitFetchHelper constructor(
@@ -22,14 +21,12 @@ class GitFetchHelper constructor(
 
     fun doFetch() {
         with(settings) {
-            GithubMirrorHelper.runWithMirror(git = git, mirrorFetchUrl = mirrorFetchUrl) {
-                val shallowSince = calculateShallowSince()
-                fetchTargetRepository(shallowSince = shallowSince)
-                fetchSourceRepository(shallowSince = shallowSince)
-                fetchPrePushBranch(shallowSince = shallowSince)
-                fetchPreMergeCommit()
-                testMerge()
-            }
+            val shallowSince = calculateShallowSince()
+            fetchTargetRepository(shallowSince = shallowSince)
+            fetchSourceRepository(shallowSince = shallowSince)
+            fetchPrePushBranch(shallowSince = shallowSince)
+            fetchPreMergeCommit()
+            testMerge()
         }
     }
 
@@ -47,10 +44,7 @@ class GitFetchHelper constructor(
         if (preMerge && fetchDepth > 0 && !git.isAtLeastVersion(GitConstants.SUPPORT_SHALLOW_SINCE_GIT_VERSION)) {
             logger.warn("开启preMerge，并且指定depth,git版本需要大于2.18才会生效，否则使用的是全量拉取")
         }
-        // 满足preMerge+浅克隆且存在公共祖先commit且git版本支持时,才按--shallow-since拉取
-        val canShallowSince = preMerge && fetchDepth > 0 && !baseCommitId.isNullOrBlank() &&
-                git.isAtLeastVersion(GitConstants.SUPPORT_SHALLOW_SINCE_GIT_VERSION)
-        if (canShallowSince) {
+        if (canShallowSince(baseCommitId)) {
             git.fetch(
                 refSpec = listOf(baseCommitId),
                 fetchDepth = 1,
@@ -62,6 +56,10 @@ class GitFetchHelper constructor(
         }
         return shallowSince
     }
+
+    private fun GitSourceSettings.canShallowSince(baseCommitId: String?) =
+        preMerge && fetchDepth > 0 && !baseCommitId.isNullOrBlank() &&
+                git.isAtLeastVersion(GitConstants.SUPPORT_SHALLOW_SINCE_GIT_VERSION)
 
     /**
      * 测试是否能够merge成功

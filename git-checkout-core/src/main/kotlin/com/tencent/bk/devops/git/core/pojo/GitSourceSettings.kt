@@ -255,10 +255,6 @@ data class GitSourceSettings(
      */
     val enableSparseCone: Boolean? = null,
     /**
-     * 代码库镜像源拉取地址
-     */
-    var mirrorUrl: String? = null,
-    /**
      * 镜像源灰度白名单项目
      */
     val mirrorGrayWhiteProject: String? = null,

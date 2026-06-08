@@ -133,7 +133,6 @@ class CheckoutAtomParamInputAdapter(
             tGitCacheGrayWhiteProject = tGitCacheGrayWhiteProject,
             enableServerPreMerge = enableServerPreMerge,
             enableSparseCone = enableSparseCone,
-            mirrorUrl = mirrorUrl,
             mirrorGrayWhiteProject = mirrorGrayWhiteProject,
             mirrorToken = mirrorToken
         )
@@ -207,7 +206,6 @@ class CheckoutAtomParamInputAdapter(
             tGitCacheGrayWhiteProject = tGitCacheGrayWhiteProject,
             enableServerPreMerge = enableServerPreMerge,
             enableSparseCone = enableSparseCone,
-            mirrorUrl = mirrorUrl,
             mirrorGrayWhiteProject = mirrorGrayWhiteProject,
             mirrorToken = mirrorToken
         )

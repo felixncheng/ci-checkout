@@ -219,7 +219,6 @@ class GitCodeCommandAtomParamInputAdapter(
                 serverPreMerge = serverPreMerge,
                 serverPreMergeCommit = serverPreMergeCommit,
                 enableSparseCone = enableSparseCone,
-                mirrorUrl = mirrorUrl ,
                 mirrorGrayWhiteProject = mirrorGrayWhiteProject,
                 mirrorToken = mirrorToken
             )

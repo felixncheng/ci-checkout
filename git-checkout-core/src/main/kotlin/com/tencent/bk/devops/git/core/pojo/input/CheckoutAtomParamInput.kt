@@ -170,10 +170,6 @@ data class CheckoutAtomParamInput(
      */
     val enableSparseCone: Boolean? = null,
     /**
-     * 代码库镜像地址
-     */
-    val mirrorUrl: String? = null,
-    /**
      * 镜像缓存灰度白名单项目
      */
     val mirrorGrayWhiteProject: String? = null,

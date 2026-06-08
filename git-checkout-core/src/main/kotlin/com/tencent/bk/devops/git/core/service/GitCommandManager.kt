@@ -160,10 +160,6 @@ class GitCommandManager(
         execGit(args = listOf("remote", "set-url", remoteName, remoteUrl))
     }
 
-    fun remoteSetPushUrl(remoteName: String, remoteUrl: String) {
-        execGit(args = listOf("remote", "set-url", "--push" , remoteName, remoteUrl))
-    }
-
     fun remoteRemove(remoteName: String) {
         execGit(args = listOf("remote", "remove", remoteName), allowAllExitCodes = true)
     }

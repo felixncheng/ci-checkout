@@ -28,6 +28,7 @@
 package com.tencent.bk.devops.git.core.service.handler
 
 import com.tencent.bk.devops.git.core.constant.ContextConstants
+import com.tencent.bk.devops.git.core.constant.ContextConstants.CONTEXT_FETCH_STRATEGY
 import com.tencent.bk.devops.git.core.constant.GitConstants
 import com.tencent.bk.devops.git.core.constant.GitConstants.DEVOPS_VIRTUAL_REMOTE_NAME
 import com.tencent.bk.devops.git.core.constant.GitConstants.ORIGIN_REMOTE_NAME
@@ -80,19 +81,23 @@ class InitRepoHandler(
         }
     }
 
+    override fun afterHandle() {
+        if (EnvHelper.getContext(CONTEXT_FETCH_STRATEGY) == FetchStrategy.PULL_MIRROR.name) {
+            git.remoteSetUrl(ORIGIN_REMOTE_NAME, settings.repositoryUrl)
+        }
+    }
+
     private fun GitSourceSettings.initRepository() {
         if (!File(repositoryPath, ".git").exists()) {
-            EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.FULL.name)
+            EnvHelper.putContext(CONTEXT_FETCH_STRATEGY, FetchStrategy.FULL.name)
             git.init()
             // 设置安全目录
             setSafeDir()
             git.remoteAdd(ORIGIN_REMOTE_NAME, repositoryUrl)
             val mirrorUrl = settings.mirrorUrl
             if (!mirrorUrl.isNullOrEmpty()) {
-                // fetch 使用镜像地址,push 保持不变
                 git.remoteSetUrl(ORIGIN_REMOTE_NAME, mirrorUrl)
-                git.remoteSetPushUrl(ORIGIN_REMOTE_NAME, repositoryUrl)
-                EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
+                EnvHelper.putContext(CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
             }
             // if source repository is fork repo, adding devops-virtual-origin
             if (preMerge && !sourceRepoUrlEqualsRepoUrl
@@ -100,8 +105,8 @@ class InitRepoHandler(
                 git.remoteAdd(DEVOPS_VIRTUAL_REMOTE_NAME, sourceRepositoryUrl)
             }
         } else {
-            if (EnvHelper.getContext(ContextConstants.CONTEXT_FETCH_STRATEGY) == null) {
-                EnvHelper.putContext(ContextConstants.CONTEXT_FETCH_STRATEGY, FetchStrategy.VM_CACHE.name)
+            if (EnvHelper.getContext(CONTEXT_FETCH_STRATEGY) == null) {
+                EnvHelper.putContext(CONTEXT_FETCH_STRATEGY, FetchStrategy.VM_CACHE.name)
             }
             git.remoteSetUrl(ORIGIN_REMOTE_NAME, repositoryUrl)
             if (preMerge && !sourceRepoUrlEqualsRepoUrl

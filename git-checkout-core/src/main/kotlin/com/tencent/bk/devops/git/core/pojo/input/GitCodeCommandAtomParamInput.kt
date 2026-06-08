@@ -168,13 +168,13 @@ data class GitCodeCommandAtomParamInput(
      */
     val mirrorUrl: String? = null,
     /**
-     * bkc github灰度白名单项目
+     * 镜像缓存灰度白名单项目
      */
-    val bkcGithubGrayWhiteProject: String? = null,
+    val mirrorGrayWhiteProject: String? = null,
     /**
-     * bkc token
+     * 镜像源token
      * */
-    val bkcToken: String? = null
+    val mirrorToken: String? = null
 ) {
     /**
      * 是否为post action

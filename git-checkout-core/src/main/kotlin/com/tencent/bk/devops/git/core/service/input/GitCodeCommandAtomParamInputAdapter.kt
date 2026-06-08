@@ -220,8 +220,8 @@ class GitCodeCommandAtomParamInputAdapter(
                 serverPreMergeCommit = serverPreMergeCommit,
                 enableSparseCone = enableSparseCone,
                 mirrorUrl = mirrorUrl ,
-                bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject,
-                bkcToken = bkcToken
+                mirrorGrayWhiteProject = mirrorGrayWhiteProject,
+                mirrorToken = mirrorToken
             )
         }
     }

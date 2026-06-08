@@ -259,13 +259,13 @@ data class GitSourceSettings(
      */
     var mirrorUrl: String? = null,
     /**
-     * bkc github灰度白名单项目
+     * 镜像源灰度白名单项目
      */
-    val bkcGithubGrayWhiteProject: String? = null,
+    val mirrorGrayWhiteProject: String? = null,
     /**
-     * bkc token
+     * 镜像源token
      * */
-    val bkcToken: String? = null
+    val mirrorToken: String? = null
 ) {
     val sourceRepoUrlEqualsRepoUrl: Boolean
         get() = GitUtil.isSameRepository(

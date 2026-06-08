@@ -298,7 +298,8 @@ class GitCodeAtomParamInputAdapter(
                 serverPreMergeCommit = serverPreMergeCommit,
                 enableSparseCone = enableSparseCone,
                 mirrorUrl = mirrorUrl,
-                bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject
+                bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject,
+                bkcToken = bkcToken
             )
         }
     }

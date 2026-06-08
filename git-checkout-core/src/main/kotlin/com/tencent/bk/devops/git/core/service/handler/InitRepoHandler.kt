@@ -94,11 +94,6 @@ class InitRepoHandler(
             // 设置安全目录
             setSafeDir()
             git.remoteAdd(ORIGIN_REMOTE_NAME, repositoryUrl)
-            val mirrorUrl = settings.mirrorUrl
-            if (!mirrorUrl.isNullOrEmpty()) {
-                git.remoteSetUrl(ORIGIN_REMOTE_NAME, mirrorUrl)
-                EnvHelper.putContext(CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
-            }
             // if source repository is fork repo, adding devops-virtual-origin
             if (preMerge && !sourceRepoUrlEqualsRepoUrl
             ) {
@@ -114,6 +109,11 @@ class InitRepoHandler(
                 git.remoteRemove(DEVOPS_VIRTUAL_REMOTE_NAME)
                 git.remoteAdd(DEVOPS_VIRTUAL_REMOTE_NAME, sourceRepositoryUrl)
             }
+        }
+        val mirrorUrl = settings.mirrorUrl
+        if (!mirrorUrl.isNullOrEmpty()) {
+            git.remoteSetUrl(ORIGIN_REMOTE_NAME, mirrorUrl)
+            EnvHelper.putContext(CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
         }
         git.remoteList()
     }

@@ -134,7 +134,8 @@ class CheckoutAtomParamInputAdapter(
             enableServerPreMerge = enableServerPreMerge,
             enableSparseCone = enableSparseCone,
             mirrorUrl = mirrorUrl,
-            bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject
+            bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject,
+            bkcToken = bkcToken
         )
     ).getInputs()
 
@@ -207,7 +208,8 @@ class CheckoutAtomParamInputAdapter(
             enableServerPreMerge = enableServerPreMerge,
             enableSparseCone = enableSparseCone,
             mirrorUrl = mirrorUrl,
-            bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject
+            bkcGithubGrayWhiteProject = bkcGithubGrayWhiteProject,
+            bkcToken = bkcToken
         )
     ).getInputs()
 

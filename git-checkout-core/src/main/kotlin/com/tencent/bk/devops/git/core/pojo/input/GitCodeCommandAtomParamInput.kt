@@ -171,6 +171,10 @@ data class GitCodeCommandAtomParamInput(
      * bkc github灰度白名单项目
      */
     val bkcGithubGrayWhiteProject: String? = null,
+    /**
+     * bkc token
+     * */
+    val bkcToken: String? = null
 ) {
     /**
      * 是否为post action

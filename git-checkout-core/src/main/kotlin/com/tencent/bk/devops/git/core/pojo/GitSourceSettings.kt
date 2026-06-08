@@ -262,6 +262,10 @@ data class GitSourceSettings(
      * bkc github灰度白名单项目
      */
     val bkcGithubGrayWhiteProject: String? = null,
+    /**
+     * bkc token
+     * */
+    val bkcToken: String? = null
 ) {
     val sourceRepoUrlEqualsRepoUrl: Boolean
         get() = GitUtil.isSameRepository(

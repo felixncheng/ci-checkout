@@ -487,8 +487,8 @@ class GitCommandManager(
                 if (e.errorCode == GitErrors.RepositoryNotFoundFailed.errorCode) {
                     eraseOauth2Credential()
                 }
-                // 如果使用拉取镜像，则回源
-                if (EnvHelper.getContext(ContextConstants.CONTEXT_FETCH_STRATEGY) == FetchStrategy.PULL_MIRROR.name) {
+                // 如果使用镜像缓存，则回源
+                if (EnvHelper.getContext(ContextConstants.CONTEXT_FETCH_STRATEGY) == FetchStrategy.MIRROR_CACHE.name) {
                     val repositoryUrl = EnvHelper.getContext(CONTEXT_REPOSITORY_URL).orEmpty()
                     remoteSetUrl(ORIGIN_REMOTE_NAME, repositoryUrl)
                     EnvHelper.putContext(ContextConstants.CONTEXT_MIRROR_RESULT, "failure")

@@ -82,7 +82,7 @@ class InitRepoHandler(
     }
 
     override fun afterHandle() {
-        if (EnvHelper.getContext(CONTEXT_FETCH_STRATEGY) == FetchStrategy.PULL_MIRROR.name) {
+        if (EnvHelper.getContext(CONTEXT_FETCH_STRATEGY) == FetchStrategy.MIRROR_CACHE.name) {
             git.remoteSetUrl(ORIGIN_REMOTE_NAME, settings.repositoryUrl)
         }
     }
@@ -109,11 +109,6 @@ class InitRepoHandler(
                 git.remoteRemove(DEVOPS_VIRTUAL_REMOTE_NAME)
                 git.remoteAdd(DEVOPS_VIRTUAL_REMOTE_NAME, sourceRepositoryUrl)
             }
-        }
-        val mirrorUrl = settings.mirrorUrl
-        if (!mirrorUrl.isNullOrEmpty()) {
-            git.remoteSetUrl(ORIGIN_REMOTE_NAME, mirrorUrl)
-            EnvHelper.putContext(CONTEXT_FETCH_STRATEGY, FetchStrategy.PULL_MIRROR.name)
         }
         git.remoteList()
     }

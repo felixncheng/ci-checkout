@@ -65,7 +65,6 @@ import com.tencent.bk.devops.git.core.pojo.GitMetricsInfo
 import com.tencent.bk.devops.git.core.pojo.GitSourceSettings
 import com.tencent.bk.devops.git.core.service.GitSourceProvider
 import com.tencent.bk.devops.git.core.service.helper.IGitMetricsHelper
-import com.tencent.bk.devops.git.core.service.helper.IGitMirrorHelper
 import com.tencent.bk.devops.git.core.service.helper.IInputAdapter
 import com.tencent.bk.devops.git.core.service.helper.VersionHelper
 import com.tencent.bk.devops.git.core.util.AgentEnv
@@ -77,6 +76,7 @@ import com.tencent.bk.devops.git.core.util.StringUtils
 import com.tencent.bk.devops.plugin.pojo.ErrorType
 import org.slf4j.LoggerFactory
 import java.util.ServiceLoader
+import kotlin.jvm.java
 
 class GitCheckoutRunner {
 
@@ -91,7 +91,6 @@ class GitCheckoutRunner {
         var settings: GitSourceSettings? = null
         try {
             settings = inputAdapter.getInputs()
-            determineMirror(settings)
             val sourceProvider = GitSourceProvider(settings = settings, devopsApi = DevopsApi())
             if (settings.postEntryParam == "True") {
                 sourceProvider.cleanUp()
@@ -202,15 +201,5 @@ class GitCheckoutRunner {
             summary.append("use 【${EnvHelper.getContext(CONTEXT_USER_ID)}】 permission")
         }
         logger.warn(summary.toString())
-    }
-
-    /**
-     * 决定镜像地址
-     * */
-    private fun determineMirror(settings: GitSourceSettings) {
-        val mirrorUrl = ServiceLoader.load(IGitMirrorHelper::class.java).firstOrNull()?.getMirrorUrl(settings)
-        mirrorUrl?.let {
-            settings.mirrorUrl = mirrorUrl
-        }
     }
 }
